@@ -6,18 +6,18 @@ This library is a collection of code which wasn't addable to the main LLBLGen Pr
 because of .NET version restrictions (as the LLBLGen Pro Runtime Framework has to run on .NET 3.5). 
 
 Building the code
-===================
+-------------------
 To build the code, you have to have LLBLGen Pro installed as it references the LLBLGen Pro Runtime Framework,
 currently v4.0. You might be able to use the code with earlier versions, but these aren't tested/supported.
 The Contrib library sourcecode is using .NET 4.5. 
 
 License
-===============
+------------
 COPYRIGHTS:
 Copyright (c)2002-2013 Solutions Design. All rights reserved.
 
 This LLBLGen Pro Contrib library is released under the following license: (BSD2)
----------------------------------------------------------------------------------
+
 Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met: 
 
