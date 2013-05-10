@@ -11,6 +11,11 @@ To build the code, you have to have LLBLGen Pro installed as it references the L
 currently v4.0. You might be able to use the code with earlier versions, but these aren't tested/supported.
 The Contrib library sourcecode is using .NET 4.5. 
 
+Contents
+---------
+* AsyncWrapper. A wrapper for the LLBLGen Pro API to avoid callers being blocked. It's not a full async
+  implementation, as described in the readme.txt included in the AsyncWrapper folder.
+
 License
 ------------
 COPYRIGHTS:
@@ -23,6 +28,7 @@ are permitted provided that the following conditions are met:
 
 1) Redistributions of source code must retain the above copyright notice, this list of 
    conditions and the following disclaimer. 
+   
 2) Redistributions in binary form must reproduce the above copyright notice, this list of 
    conditions and the following disclaimer in the documentation and/or other materials 
    provided with the distribution. 

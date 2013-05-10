@@ -42,7 +42,9 @@ using System.Threading.Tasks;
 namespace SD.LLBLGen.Pro.ORMSupportClasses.Contrib
 {
 	/// <summary>
-	/// Wrapper class which makes it possible to use LLBLGen Pro Adapter code in an async way.
+	/// Wrapper class which makes it possible to use LLBLGen Pro Adapter code in an async way. Doesn't make the LLBLGen Pro
+	/// runtime framework become Asynchronous, it only allows a caller to perform a non-blocking call using await: all the
+	/// work done by the LLBLGen Pro Runtime Framework is still synchronous code. 
 	/// </summary>
 	/// <typeparam name="TAdapter">The IDataAccessAdapter implementing class to use as DataAccessAdapter.</typeparam>
 	/// <remarks>
@@ -69,7 +71,7 @@ namespace SD.LLBLGen.Pro.ORMSupportClasses.Contrib
 	/// context, like FetchDataReader. No overload calling is done in this class, as it would assume call order/flow
 	/// of the wrapped class. 
 	/// </remarks>
-	public class AsyncDataAccessAdapter<TAdapter>
+	public class AsyncAdapterWrapper<TAdapter>
 		where TAdapter : class, IDataAccessAdapter, new()
 	{
 		#region Member declarations
@@ -78,19 +80,19 @@ namespace SD.LLBLGen.Pro.ORMSupportClasses.Contrib
 
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="AsyncDataAccessAdapter{TAdapter}"/> class. Will use
+		/// Initializes a new instance of the <see cref="AsyncAdapterWrapper{TAdapter}"/> class. Will use
 		/// default connection string defined on TAdapter.
 		/// </summary>
-		public AsyncDataAccessAdapter() : this(string.Empty)
+		public AsyncAdapterWrapper() : this(string.Empty)
 		{
 		}
 
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="AsyncDataAccessAdapter{TAdapter}"/> class.
+		/// Initializes a new instance of the <see cref="AsyncAdapterWrapper{TAdapter}"/> class.
 		/// </summary>
 		/// <param name="connectionString">The connection string to use for the async operations.</param>
-		public AsyncDataAccessAdapter(string connectionString)
+		public AsyncAdapterWrapper(string connectionString)
 		{
 			_alternativeConnectionString = connectionString ?? string.Empty;
 			this.TransactionIsolationLevel = IsolationLevel.Unspecified;

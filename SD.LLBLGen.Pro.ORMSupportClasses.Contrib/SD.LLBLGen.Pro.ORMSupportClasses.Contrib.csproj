@@ -46,11 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsyncDataAccessAdapter.cs" />
+    <Compile Include="AsyncWrapper\AsyncAdapterWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SD.LLBLGen.Pro.ORMSupportClasses.Contrib.StrongKey.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AsyncWrapper\Readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
