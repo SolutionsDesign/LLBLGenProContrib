@@ -13,8 +13,7 @@ The Contrib library sourcecode is using .NET 4.5.
 
 Contents
 ---------
-* AsyncWrapper. A wrapper for the LLBLGen Pro API to avoid callers being blocked. It's not a full async
-  implementation, as described in the readme.txt included in the AsyncWrapper folder.
+
 
 License
 ------------
