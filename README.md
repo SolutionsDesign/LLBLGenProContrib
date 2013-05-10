@@ -13,7 +13,8 @@ The Contrib library sourcecode is using .NET 4.5.
 
 Contents
 ---------
-
+* Caching. This folder contains additional IResultsetCache implementations for 3rd party cache providers, like
+  an implementation which utilizes the .NET 4.0 MemoryCache, available in the .NET framework.
 
 License
 ------------
