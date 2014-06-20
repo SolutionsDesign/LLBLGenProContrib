@@ -41,6 +41,8 @@ using System.Linq;
 using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
+using SD.LLBLGen.Pro.ORMSupportClasses;
+using SD.LLBLGen.Pro.ORMSupportClasses.Contrib.Caching;
 
 namespace SD.LLBLGen.Pro.ORMSupportClasses.Contrib
 {
@@ -52,7 +54,7 @@ namespace SD.LLBLGen.Pro.ORMSupportClasses.Contrib
 	{
 		#region Class Member Declarations
 		private MemoryCache _memoryCache;
-		private Dictionary<CacheKey, Guid> _cacheKeyToMemoryCacheKey;
+		private CacheKeyStore _keyStore;
 		#endregion
 
 
@@ -68,7 +70,7 @@ namespace SD.LLBLGen.Pro.ORMSupportClasses.Contrib
 		public MemoryCachedResultsetCache(string name, NameValueCollection config)
 		{
 			_memoryCache = new MemoryCache(name, config);
-			_cacheKeyToMemoryCacheKey = new Dictionary<CacheKey, Guid>();
+			_keyStore = new CacheKeyStore();
 		}
 
 
@@ -83,7 +85,7 @@ namespace SD.LLBLGen.Pro.ORMSupportClasses.Contrib
 		/// </remarks>
 		public void Add(CacheKey key, CachedResultset toCache, TimeSpan duration)
 		{
-			Add(key, toCache, duration, false);
+			Add(key, toCache, duration, false, string.Empty);
 		}
 
 
@@ -96,7 +98,21 @@ namespace SD.LLBLGen.Pro.ORMSupportClasses.Contrib
 		/// <param name="overwriteIfPresent">if set to <c>true</c> it will replace an existing cached set with the one specified.</param>
 		public void Add(CacheKey key, CachedResultset toCache, TimeSpan duration, bool overwriteIfPresent)
 		{
-			var keyToUse = GetMemoryCacheKey(key);
+			Add(key, toCache, duration, overwriteIfPresent, string.Empty);
+		}
+
+
+		/// <summary>
+		/// Adds the specified toCache to this cache under the key specified for the duration specified and assigns the tag specified to it.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		/// <param name="toCache">The resultset to cache</param>
+		/// <param name="duration">The duration how long the resultset will stay in the cache.</param>
+		/// <param name="overwriteIfPresent">if set to <c>true</c> it will replace an existing cached set with the one specified.</param>
+		/// <param name="tag">The tag under which the resultset has to be cached.</param>
+		public void Add(CacheKey key, CachedResultset toCache, TimeSpan duration, bool overwriteIfPresent, string tag)
+		{
+			var keyToUse = _keyStore.GetPersistentCacheKey(key, duration, tag);
 			var policyToUse = ProduceCacheItemPolicy(duration);
 			if(overwriteIfPresent)
 			{
@@ -118,7 +134,30 @@ namespace SD.LLBLGen.Pro.ORMSupportClasses.Contrib
 		/// </returns>
 		public CachedResultset Get(CacheKey key)
 		{
-			return _memoryCache.Get(GetMemoryCacheKey(key)) as CachedResultset;
+			return _memoryCache.Get(_keyStore.GetNonPersistentCacheKey(key)) as CachedResultset;
+		}
+
+
+		/// <summary>
+		/// Gets the cached resultsets with the tag specified.
+		/// </summary>
+		/// <param name="tag">The tag which resultsets have to be returned.</param>
+		/// <returns>
+		/// the cached resultsets which have the specified tag assigned to them, otherwise empty list.
+		/// </returns>
+		public List<CachedResultset> Get(string tag)
+		{
+			var toReturn = new List<CachedResultset>();
+			var cacheKeys = _keyStore.GetCacheKeysForTag(tag);
+			foreach(var cacheKey in cacheKeys)
+			{
+				var toAdd = Get(cacheKey);
+				if(toAdd != null)
+				{
+					toReturn.Add(toAdd);
+				}
+			}
+			return toReturn;
 		}
 
 
@@ -128,7 +167,21 @@ namespace SD.LLBLGen.Pro.ORMSupportClasses.Contrib
 		/// <param name="key">The key.</param>
 		public void PurgeResultset(CacheKey key)
 		{
-			_memoryCache.Remove(GetMemoryCacheKey(key));
+			_memoryCache.Remove(_keyStore.GetNonPersistentCacheKey(key));
+		}
+
+
+		/// <summary>
+		/// Purges the resultsets cached with the tag specified from the cache, if present.
+		/// </summary>
+		/// <param name="tag">The tag.</param>
+		public void PurgeResultsets(string tag)
+		{
+			var cacheKeys = _keyStore.GetCacheKeysForTag(tag);
+			foreach(var key in cacheKeys)
+			{
+				PurgeResultset(key);
+			}
 		}
 
 
@@ -140,26 +193,6 @@ namespace SD.LLBLGen.Pro.ORMSupportClasses.Contrib
 		protected virtual CacheItemPolicy ProduceCacheItemPolicy(TimeSpan duration)
 		{
 			return new CacheItemPolicy() { AbsoluteExpiration = new DateTimeOffset(DateTime.Now, duration) };
-		}
-
-
-		/// <summary>
-		/// Gets the memory cache key to use for the cachekey specified.
-		/// </summary>
-		/// <param name="originalKey">The original key.</param>
-		/// <returns>the string equivalent of the guid associated with the cachekey specified</returns>
-		private string GetMemoryCacheKey(CacheKey originalKey)
-		{
-			Guid toReturn = Guid.Empty;
-			using(TimedLock.Lock(_memoryCache))
-			{
-				if(!_cacheKeyToMemoryCacheKey.TryGetValue(originalKey, out toReturn))
-				{
-					toReturn = Guid.NewGuid();
-					_cacheKeyToMemoryCacheKey.Add(originalKey, toReturn);
-				}
-			}
-			return toReturn.ToString();
 		}
 	}
 }
