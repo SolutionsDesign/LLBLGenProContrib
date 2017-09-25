@@ -1,0 +1,27 @@
+﻿{
+	"LLBLGen":{
+		"ConnectionStrings": {
+			"ConvNext": "data source=YOURDATABOX;initial catalog=SomeUser;User ID=user;Password=secret;persist security info=False;packet size=4096;Connection Timeout=300"
+		},
+		"SqlServerCatalogNameOverwrites": [
+			{
+				"CatalogName": "ConvNext",
+				"Overwrite": ""
+			}
+		],
+		"Tracing": {
+			"Switches": {
+				"SqlServerDQE": 0,
+				"ORMGeneral": 0,
+				"ORMStateManagement": 0,
+				"ORMPersistenceExecution": 0,
+				"ORMPlainSQLQueryExecution": 0
+			},
+			"Listeners": {
+				"Debug": false,
+				"Console": true,
+				"File": "TraceLog.log"
+			}
+		}
+	}
+}
